@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Just One Question ❤️</title>
+
+<style>
+body {
+  height: 100vh;
+  background: #f6b7b7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial;
+  overflow: hidden;
+}
+
+.card {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  width: 300px;
+  position: relative;
+}
+
+img {
+  width: 120px;
+  transition: 0.3s;
+}
+
+button {
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 5px;
+  transition: 0.2s;
+}
+
+#yesBtn { background: #4CAF50; color: white; }
+#noBtn  { background: #e74c3c; color: white; }
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-6px); }
+  100% { transform: translateX(0); }
+}
+.shake { animation: shake 0.4s; }
+
+.heart {
+  position: fixed;
+  font-size: 24px;
+  animation: float 2s linear forwards;
+}
+@keyframes float {
+  0% { opacity:1; transform: translateY(0) scale(1); }
+  100% { opacity:0; transform: translateY(-150px) scale(1.5); }
+}
+</style>
+</head>
+
+<body>
+
+<div class="card" id="card">
+  <img id="img" src="1.gif">
+  <h2 id="text">Will you go out with me? 💕</h2>
+
+  <div style="margin-top:20px;">
+    <button id="yesBtn" onclick="yesClicked()">Yes</button>
+    <button id="noBtn" onclick="noClicked()">No</button>
+  </div>
+</div>
+
+<script>
+let noCount = 0;
+let escapeMode = false;
+let lastX = 0, lastY = 0;
+
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+const text = document.getElementById("text");
+const card = document.getElementById("card");
+const img = document.getElementById("img");
+
+const messages = [
+  "Please think again 🥺",
+  "Ek baar aur soch lo 😭",
+  "Itna bhi bura nahi hoon 😔",
+  "Last chance 😢"
+];
+
+const images = ["2.gif", "3.gif", "4.gif", "5.gif"];
+
+function noClicked() {
+  if (noCount < messages.length) {
+    text.innerText = messages[noCount];
+    img.src = images[noCount];
+    yesBtn.style.fontSize = (16 + noCount * 8) + "px";
+    noCount++;
+  }
+
+  card.classList.add("shake");
+  setTimeout(() => card.classList.remove("shake"), 400);
+
+  spawnHeart("💔", 3);
+
+  if (noCount >= messages.length) {
+    escapeMode = true;
+    noBtn.style.position = "absolute";
+  }
+}
+
+document.addEventListener("mousemove", (e) => {
+  if (!escapeMode) return;
+
+  const rect = noBtn.getBoundingClientRect();
+  const dist = Math.hypot(
+    e.clientX - (rect.left + rect.width / 2),
+    e.clientY - (rect.top + rect.height / 2)
+  );
+
+  if (dist < 120) moveNoButton();
+});
+
+function moveNoButton() {
+  const maxX = card.clientWidth - noBtn.offsetWidth;
+  const maxY = card.clientHeight - noBtn.offsetHeight;
+
+  let x, y;
+  do {
+    x = Math.random() * maxX;
+    y = Math.random() * maxY;
+  } while (Math.abs(x - lastX) < 60 && Math.abs(y - lastY) < 60);
+
+  lastX = x;
+  lastY = y;
+
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
+}
+
+function yesClicked() {
+  document.body.innerHTML = `
+    <div style="
+      height:100vh;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      background:#ffdde1;
+      text-align:center;">
+      <h1 style="font-size:40px;">Yayyy ❤️🥰</h1>
+      <p style="font-size:20px;">I knew it 😘</p>
+    </div>
+  `;
+}
+
+function spawnHeart(symbol, count) {
+  for (let i = 0; i < count; i++) {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerText = symbol;
+    heart.style.left = Math.random() * window.innerWidth + "px";
+    heart.style.top = Math.random() * window.innerHeight + "px";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 2000);
+  }
+}
+</script>
+
+</body>
+</html>
